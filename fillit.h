@@ -16,6 +16,7 @@
 typedef	struct			s_tetriminos
 {
 	char				**content;
+	int					*coordinates;
 	struct s_tetriminos	*next;
 }						t_tetriminos;
 
