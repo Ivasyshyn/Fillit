@@ -49,7 +49,7 @@ int		ft_first_check(char *str)
 		{
 			if (*(str) != '.' && *(str) != '#')
 			{
-				printf("%s\n", "Handled error 1: Only '.' and '#' signs are allowed");
+				printf("%s\n", "Error! Tetriminos must be made via dots and hash tags");
 				return (0);
 			}
 			*str == '.' ? dot_counter++ : hash_counter++;
@@ -59,13 +59,13 @@ int		ft_first_check(char *str)
 		str++;
 		if ((dot_counter + hash_counter) / new_lines != 4)
 		{
-			printf("%s\n", "Handled error 2: Only 4 chars per line");
+			printf("%s\n", "Error! Each line must have 4 symbols");
 			return (0);
 		}
 	}
 	if (new_lines != 4 || dot_counter != 12 || hash_counter != 4)
 	{
-		printf("%s\n", "Handled error 3: Only 4 lines, 12 dots and 4 hash tags");
+		printf("%s\n", "Error! Tetriminos must have 4 lines, 12 dots and 4 hash tags");
 		return (0);
 	}
 	return (1);
