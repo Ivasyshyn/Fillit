@@ -1,11 +1,16 @@
-#include "fillit.h"
-#include "libft.h"
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   h.c                                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sivasysh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/12/03 21:10:36 by sivasysh          #+#    #+#             */
+/*   Updated: 2017/12/03 21:10:36 by sivasysh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "fillit.h"
 
 static int		ft_check_valid_figure_part1(int *t)
 {
@@ -51,7 +56,7 @@ static int		ft_check_valid_figure_part2(int *t)
 	return (0);
 }
 
-int				ft_check_valid_figure(int *tab)
+static int		tetr_check(int *tab)
 {
 	if (ft_check_valid_figure_part1(tab) == 1)
 		return (1);
@@ -60,11 +65,7 @@ int				ft_check_valid_figure(int *tab)
 	return (0);
 }
 
-
-
-
-
-static int			add_tetr(t_tetriminos **root, t_tetriminos *new)
+static int		add_t(t_tetr **root, t_tetr *new)
 {
 	if (!new)
 		return (0);
@@ -73,14 +74,14 @@ static int			add_tetr(t_tetriminos **root, t_tetriminos *new)
 	else
 	{
 		if ((*root)->next)
-			add_tetr(&(*root)->next, new);
+			add_t(&(*root)->next, new);
 		else
-	 		(*root)->next = new;
+			(*root)->next = new;
 	}
 	return (1);
 }
 
-static int			*ft_get_coordinates(char **content)
+static int		*get_xy(char **content)
 {
 	int *coordinates;
 	int x;
@@ -88,14 +89,13 @@ static int			*ft_get_coordinates(char **content)
 	int i;
 
 	i = 0;
-
-	if(!content || !(coordinates = (int*)malloc(sizeof(int) * 8)))
+	if (!content || !(coordinates = (int*)malloc(sizeof(int) * 8)))
 		return (NULL);
 	x = 0;
 	while (content[x])
 	{
 		y = 0;
-		while (content[x][y] )
+		while (content[x][y])
 		{
 			if (content[x][y] == '#')
 			{
@@ -109,28 +109,50 @@ static int			*ft_get_coordinates(char **content)
 	return (coordinates);
 }
 
-static t_tetriminos	*new_tetr(char *str, char ltr)
+static int		get_size(int *c)
 {
-	t_tetriminos *new;
+	int x;
+	int y;
 
-	if (ltr <= 'Z' && (new = (t_tetriminos*)malloc(sizeof(t_tetriminos))))
+	x = c[6] - c[0] + 1;
+	y = c[7] - c[1] + 1;
+	return (x > y ? x : y);
+}
+
+static t_tetr	*new_t(char *str, char ltr)
+{
+	t_tetr	*new;
+
+	if (!(tetr_check(get_xy(ft_strsplit(str, '\n')))))
+		ft_putstr("Error! The figure isn't Tetriminos\n");
+	else if (ltr > 'Z')
+		ft_putstr("Error! The file must contain between 1 and 26 Tetriminos\n");
+	else if (!(new = (t_tetr*)malloc(sizeof(t_tetr))))
+		ft_putstr("Error! Malloc hasn't been able to allocate memory\n");
+	else
 	{
 		new->content = ft_strsplit(str, '\n');
-		new->coordinates = ft_get_coordinates(new->content);
-		if (!ft_check_valid_figure(new->coordinates))
-		{
-			printf("%s\n", "Error!========= FUCK ME ====");
-			return (NULL);
-		}
+		new->coordinates = get_xy(new->content);
 		new->ltr = ltr;
+		new->size = get_size(new->coordinates);
 		new->next = NULL;
 		return (new);
 	}
-	ft_putstr("Error! Your file must contain between 1 and 26 Tetriminos");
 	return (NULL);
 }
 
-static int			input_check(char *str)
+static int		error_msg(int error)
+{
+	if (error == 1)
+		ft_putstr("Error! Only '.' and '#' are allowed\n");
+	if (error == 2)
+		ft_putstr("Error! Each line must have 4 symbols\n");
+	if (error == 3)
+		ft_putstr("Error! Tetriminos must have 4 lines, 12 '.' and 4 '#'\n");
+	return (0);
+}
+
+static int		in_check(char *str)
 {
 	int dot_counter;
 	int hash_counter;
@@ -139,35 +161,26 @@ static int			input_check(char *str)
 	dot_counter = 0;
 	hash_counter = 0;
 	new_lines = 0;
-	while(*str)
+	while (*str)
 	{
-		while (*(str) != '\n')
+		while (*str != '\n')
 		{
-			if (*(str) != '.' && *(str) != '#')
-			{
-				ft_putstr("Error! Tetriminos must be made via dots and hash tags\n");
-				return (0);
-			}
+			if (*str != '.' && *str != '#')
+				return (error_msg(1));
 			*str == '.' ? dot_counter++ : hash_counter++;
 			str++;
 		}
 		new_lines++;
 		str++;
 		if ((dot_counter + hash_counter) / new_lines != 4)
-		{
-			ft_putstr("Error! Each line must have 4 symbols\n");
-			return (0);
-		}
+			return (error_msg(2));
 	}
 	if (new_lines != 4 || dot_counter != 12 || hash_counter != 4)
-	{
-		ft_putstr("Error! Tetriminos must have 4 lines, 12 dots and 4 hash tags\n");
-		return (0);
-	}
+		return (error_msg(3));
 	return (1);
 }
 
-static void			clean_lst(t_tetriminos **lst)
+static void		clean_lst(t_tetr **lst)
 {
 	if (*lst)
 	{
@@ -178,62 +191,53 @@ static void			clean_lst(t_tetriminos **lst)
 		ft_memdel((void*)&(*lst)->coordinates);
 		ft_memdel((void*)lst);
 	}
-	
 }
 
-	char				**content;
-	int					*coordinates;
-	char				letter;
-	struct s_tetriminos	*next;
-
-t_tetriminos		*ft_read_file(char *argv)
+static t_tetr	*ft_read_file(char *file, t_tetr **lst)
 {
-	int				fd;
-	int				ret;
-	char			*str;
-	char			ltr;
-	t_tetriminos	*lst;
+	int		fd;
+	int		ret;
+	int		last;
+	char	*str;
+	char	ltr;
 
 	ltr = 'A';
-	lst = NULL;
-	fd = open(argv, O_RDONLY);
-	if (fd == -1)
+	if (!(fd = open(file, O_RDONLY)))
 		return (NULL);
-	str = (char *)malloc(sizeof(char) * 21);
+	if (!(str = (char *)malloc(sizeof(char) * 21)))
+		return (NULL);
 	while ((ret = read(fd, str, 21)))
-	{ 
+	{
 		str[20] = '\0';
-		if (!input_check(str) || !(add_tetr(&lst, new_tetr(str, ltr++))))
-		{
-			clean_lst(&lst);
-			break ;
-		}
+		if (!in_check(str) || !(add_t(lst, new_t(str, ltr++))))
+			return (NULL);
+		last = ret;
 	}
-	if (close(fd) == -1)
+	if (last != 20)
+	{
+		ft_putstr("Error! Invalid new line quantity\n");
 		return (NULL);
-	return (lst);
+	}
+	return (close(fd) == -1 ? NULL : *lst);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-int	main(int argc, char **argv)
+int				main(int argc, char **argv)
 {
-	int a = 0;
-	t_tetriminos *tetriminos;
-	char **syka;
+	t_tetr	*lst;
+	t_tetr	*tetriminos;
+	int		a;
+
+	a = 0;
 	if (argc == 2)
 	{
-		tetriminos = ft_read_file(argv[1]);
-		syka = tetriminos->content;
-		int *aaa;
-		aaa = tetriminos->coordinates;
-		while (a < 8)
-			printf("%d, ", aaa[a++]);
+		if (!(tetriminos = ft_read_file(argv[1], &lst)))
+			clean_lst(&lst);
+		while (++a < 8)
+			printf("%d, ", *tetriminos->coordinates++);
 		printf("\n");
-		while (*syka)
-			printf("%s\n", *syka++);
+		printf("%d\n", tetriminos->size);
+		while (*tetriminos->content)
+			printf("%s\n", *tetriminos->content++);
 	}
 	else
 		ft_putstr("usage: fillit [file name]\n");
