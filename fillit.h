@@ -26,6 +26,7 @@ typedef	struct			s_tetr
 	int					size;
 	char				ltr;
 	struct s_tetr		*next;
+	struct s_tetr		*prev;
 }						t_tetr;
 
 #endif

@@ -76,7 +76,10 @@ static int		add_t(t_tetr **root, t_tetr *new)
 		if ((*root)->next)
 			add_t(&(*root)->next, new);
 		else
+		{
 			(*root)->next = new;
+			new->prev = *root;
+		}
 	}
 	return (1);
 }
@@ -136,6 +139,7 @@ static t_tetr	*new_t(char *str, char ltr)
 		new->ltr = ltr;
 		new->size = get_size(new->coordinates);
 		new->next = NULL;
+		new->prev = NULL;
 		return (new);
 	}
 	return (NULL);
@@ -221,6 +225,26 @@ static t_tetr	*ft_read_file(char *file, t_tetr **lst)
 	return (close(fd) == -1 ? NULL : *lst);
 }
 
+// char 			**fit_map(char **map, int size)
+// {
+// 	char	**map;
+// 	int		lenght;
+
+// 	lenght = size;
+// 	if (!(map = (char**)malloc(sizeof(char*) * size + 1)))
+// 		return (NULL);
+// 	map[size] = NULL;
+// 	while (lenght)
+// 	{
+// 		if (!(map[lenght] = (char*)malloc(sizeof(char) * size + 1)))
+// 			return (NULL);
+// 		map[size] = '\0';
+// 		ft_memset(map[lenght], '.');
+// 		lenght--;
+// 	}
+// 	return (map);
+// }
+
 int				main(int argc, char **argv)
 {
 	t_tetr	*lst;
@@ -233,11 +257,11 @@ int				main(int argc, char **argv)
 		if (!(tetriminos = ft_read_file(argv[1], &lst)))
 			clean_lst(&lst);
 		while (++a < 8)
-			printf("%d, ", *tetriminos->coordinates++);
+			printf("%d, ", *tetriminos->next->next->coordinates++);
 		printf("\n");
 		printf("%d\n", tetriminos->size);
-		while (*tetriminos->content)
-			printf("%s\n", *tetriminos->content++);
+		while (*tetriminos->next->next->prev->content)
+			printf("%s\n", *tetriminos->next->next->prev->content++);
 	}
 	else
 		ft_putstr("usage: fillit [file name]\n");
