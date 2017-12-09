@@ -11,8 +11,9 @@
 /* ************************************************************************** */
 
 #include "fillit.h"
+#include <stdio.h>
 
-int *move_left_figure(int *tab, int start) // позиціонує фігуру у верхній лівий 
+void 	move_left_figure(int *tab, int start) // позиціонує фігуру у верхній лівий 
 {											//куток
 	int y;
 	int yx;
@@ -35,13 +36,13 @@ int *move_left_figure(int *tab, int start) // позиціонує фігуру 
 	}
 	if (start < 1) 
 		move_left_figure(tab, 1);
-	return (tab);
 }
 
 void	move_right(int *tab) // перемещує праворуч по осі х
 {
-	int x = 1;
+	int x;
 
+	x = 1;
 	while (x <= 7)
 	{
 		tab[x] = tab[x] + 1;
@@ -51,8 +52,9 @@ void	move_right(int *tab) // перемещує праворуч по осі х
 
 void	move_down(int *tab) // переміщує вниз по осі y
 {
-	int y = 0;
+	int y;
 
+	y = 0;
 	while (y <= 6)
 	{
 		tab[y] = tab[y] + 1;
@@ -96,22 +98,43 @@ int	chec_y_size(int *tab) // перевіряє розмір квадрата п
 	return (max);
 }
 
-int		check(int *tab1, int *tab2) // перевіряє співпадіння координат порівняно
-{								// з іншими координатами
+int		check(int **tab, int index) // перевіряє співпадіння фігур
+{
 	int first;
 	int last;
+	int row;
 
-	first = 0;
-	while (first <= 6)
+	row = index - 1;
+	while (row >= 0)
 	{
-		last = 0;
-		while (last <= 6)
+		first = 0;
+		while (first <= 6)
 		{
-			if (tab1[first] == tab2[last] && tab1[first + 1] == tab2[last + 1])
+			last = 0;
+			while (last <= 6)
+			{
+				if (tab[row][first] == tab[index][last] && tab[row][first + 1] == tab[index][last + 1])
 				return (0);
-			last = last + 2;
+				last = last + 2;
+			}
+			first = first + 2;
 		}
-		first = first + 2;
+		row--;
 	}
 	return (1);
 }
+
+void	ft_move_default_figure(int **tab, int figure_count) // фігур ив старт
+{
+	int index;
+
+	index = 0;
+	while (index < figure_count)
+		move_left_figure(tab[index++], 0);
+}
+
+
+
+
+
+
