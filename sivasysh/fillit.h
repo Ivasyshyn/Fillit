@@ -19,6 +19,7 @@
 # include <fcntl.h>
 # include "libft.h"
 
+
 typedef	struct			s_tetr
 {
 	char				**content;
@@ -46,5 +47,6 @@ int						error_msg(int error);
 int						in_check(char *str);
 void					get_tabb(t_tetr *lst, int **tabb);
 int						*get_xy(char **content);
+int						ft_costil(int **tab, int figure_count);
 
 #endif
