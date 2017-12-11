@@ -12,7 +12,7 @@
 
 #include "fillit.h"
 
-static int		ft_shift(int **tab, int in, int *map_size) // рухає фігури
+static int		ft_shift(int **tab, int in, int *map_size)
 {
 	if (chec_x_size(tab[in]) < *map_size - 1)
 		move_right(tab[in]);
@@ -30,7 +30,7 @@ static int		ft_shift(int **tab, int in, int *map_size) // рухає фігур�
 	return (1);
 }
 
-void	solid(int **tab, int *map_size, int figure_count) // сортування фігур перебором
+void			solid(int **tab, int *map_size, int figure_count)
 {
 	int in;
 	int c;
@@ -39,12 +39,12 @@ void	solid(int **tab, int *map_size, int figure_count) // сортування �
 	in = 0;
 	while (in < figure_count)
 	{
-		c = 1;	
+		c = 1;
 		j = check(tab, in);
 		if (j)
 			in++;
 		if (!j && in > 0)
-			c = ft_shift(tab, in, map_size);;
+			c = ft_shift(tab, in, map_size);
 		while (c == 0 && in > 0)
 		{
 			in--;

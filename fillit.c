@@ -12,7 +12,7 @@
 
 #include "fillit.h"
 
-static int		add_t(t_tetr **root, t_tetr *new)
+int		add_t(t_tetr **root, t_tetr *new)
 {
 	if (!new)
 		return (0);
@@ -28,36 +28,7 @@ static int		add_t(t_tetr **root, t_tetr *new)
 	return (1);
 }
 
-static int		*get_xy(char **content)
-{
-	int *coordinates;
-	int x;
-	int y;
-	int i;
-
-	i = 0;
-	if (!content || !(coordinates = (int*)malloc(sizeof(int) * 8)))
-		return (NULL);
-	x = 0;
-	while (content[x])
-	{
-		y = 0;
-		while (content[x][y])
-		{
-			if (content[x][y] == '#')
-			{
-				coordinates[i++] = x;
-				coordinates[i++] = y;
-			}
-			y++;
-		}
-		x++;
-	}
-	move_left_figure(coordinates, 0);
-	return (coordinates);
-}
-
-static t_tetr	*new_t(char *str, char ltr)
+t_tetr	*new_t(char *str, char ltr)
 {
 	t_tetr	*new;
 
@@ -78,42 +49,7 @@ static t_tetr	*new_t(char *str, char ltr)
 	return (NULL);
 }
 
-static int		error_msg(int error)
-{
-	if (error == 1 || error == 2 || error == 3)
-		ft_putendl("error");
-	return (0);
-}
-
-static int		in_check(char *str)
-{
-	int dot_counter;
-	int hash_counter;
-	int new_lines;
-
-	dot_counter = 0;
-	hash_counter = 0;
-	new_lines = 0;
-	while (*str)
-	{
-		while (*str != '\n')
-		{
-			if (*str != '.' && *str != '#')
-				return (error_msg(1));
-			*str == '.' ? dot_counter++ : hash_counter++;
-			str++;
-		}
-		new_lines++;
-		str++;
-		if ((dot_counter + hash_counter) / new_lines != 4)
-			return (error_msg(2));
-	}
-	if (new_lines != 4 || dot_counter != 12 || hash_counter != 4)
-		return (error_msg(3));
-	return (1);
-}
-
-static void		clean_lst(t_tetr **lst)
+void	clean_lst(t_tetr **lst)
 {
 	if (*lst)
 	{
@@ -126,7 +62,7 @@ static void		clean_lst(t_tetr **lst)
 	}
 }
 
-static t_tetr	*ft_read_file(char *file, t_tetr **lst)
+t_tetr	*ft_read_file(char *file, t_tetr **lst)
 {
 	int		fd;
 	int		ret;
@@ -154,22 +90,7 @@ static t_tetr	*ft_read_file(char *file, t_tetr **lst)
 	return (close(fd) == -1 ? NULL : *lst);
 }
 
-int	ft_list_size(t_tetr *lst)
-{
-	int index;
-	t_tetr *start;
-
-	index = 0;
-	start = lst;
-	while(start)
-	{
-		index++;
-		start = start->next;
-	}
-	return (index);
-}
-
-int				main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	t_tetr	*lst;
 	t_tetr	*tetriminos;
@@ -183,24 +104,16 @@ int				main(int argc, char **argv)
 			clean_lst(&lst);
 			return (0);
 		}
+		size_of_list = ft_list_size(lst);
+		tabb = (int **)malloc(sizeof(int *) * size_of_list);
+		get_tabb(lst, tabb);
+		sirizyk_pirozik(tabb, size_of_list);
+		clean_lst(&tetriminos);
+		free(tabb);
 	}
 	else
 	{
 		ft_putstr("usage: fillit [file name]\n");
 		return (0);
 	}
-	size_of_list = ft_list_size(lst);
-	tabb = (int **)malloc(sizeof(int *) * size_of_list);
-	int index;
-
-	index = 0;
-	while (lst)
-	{
-		tabb[index] = lst->coordinates;
-		lst = lst->next;
-		index++;
-	}
-	sirizyk_pirozik(tabb, size_of_list);
-	free(tabb);
-	return (0);
 }

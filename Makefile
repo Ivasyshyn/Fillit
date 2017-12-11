@@ -11,7 +11,7 @@
 #******************************************************************************#
 
 NAME = fillit
-CFILES = fillit.c ft_audit.c ft_mapcalc.c ft_move_figure.c ft_sort.c ft_costil.c
+CFILES = fillit.c fillit_help.c ft_audit.c ft_mapcalc.c ft_move_figure.c ft_sort.c ft_costil.c
 
 OFILES = $(CFILES:.c=.o)
 

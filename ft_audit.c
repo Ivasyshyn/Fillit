@@ -56,7 +56,7 @@ static int		ft_check_valid_figure_part2(int *t)
 	return (0);
 }
 
-int		tetr_check(int *tab)
+int				tetr_check(int *tab)
 {
 	if (ft_check_valid_figure_part1(tab) == 1)
 		return (1);
@@ -65,7 +65,7 @@ int		tetr_check(int *tab)
 	return (0);
 }
 
-int		check(int **tab, int index) /* перевіряє співпадіння фігур */
+int				check(int **tab, int index)
 {
 	int first;
 	int last;
@@ -80,8 +80,9 @@ int		check(int **tab, int index) /* перевіряє співпадіння ф
 			last = 0;
 			while (last <= 6)
 			{
-				if (tab[row][first] == tab[index][last] && tab[row][first + 1] == tab[index][last + 1])
-				return (0);
+				if (tab[row][first] == tab[index][last]
+					&& tab[row][first + 1] == tab[index][last + 1])
+					return (0);
 				last = last + 2;
 			}
 			first = first + 2;
@@ -91,7 +92,7 @@ int		check(int **tab, int index) /* перевіряє співпадіння ф
 	return (1);
 }
 
-void	ft_move_default_figure(int **tab, int figure_count) /* фігур в старт */
+void			ft_move_default_figure(int **tab, int figure_count)
 {
 	int index;
 

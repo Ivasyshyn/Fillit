@@ -18,8 +18,8 @@
 
 int		ft_map_size(int nb)
 {
-	int		res;
-	int		tmp;
+	int	res;
+	int	tmp;
 
 	tmp = nb * 4;
 	while ((res = ft_sqrt(tmp)) == 0)
@@ -52,8 +52,8 @@ void	map_creator(char ***src, int nb)
 
 void	figure_print(char **src, int *tab, char alpha)
 {
-	int		iny;
-	int		inx;
+	int	iny;
+	int	inx;
 
 	iny = 0;
 	inx = 1;
@@ -89,8 +89,6 @@ void	map_print(int **tab, int map_size, int figure_count)
 		ft_putendl(src[index++]);
 	ft_putendl(src[index]);
 	index = 0;
-	// while (index < figure_count)
-	// 	free(src[index++]);
 	free(src);
 }
 
@@ -105,20 +103,7 @@ void	sirizyk_pirozik(int **tab, int figure_count)
 
 	map_size = ft_map_size(figure_count);
 	tmp = ft_large_coordinates(tab, figure_count);
-//	printf("size %d\n", map_size);
-//	printf("large %d\n", tmp);
 	map_size = tmp >= map_size ? tmp + 1 : map_size;
-
 	solid(tab, &map_size, figure_count);
-	// int index = 0;
-	// while (index < 8)
-	// 	printf("%d\n", tab[0][index++]);
-	// 	index = 0;
-	// while (index < 8)
-	// 	printf("%d\n", tab[1][index++]);
-//	printf("map size%d\n", map_size);
 	map_print(tab, map_size, figure_count);
 }
-
-
-
